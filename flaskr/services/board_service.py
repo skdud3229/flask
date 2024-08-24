@@ -1,4 +1,4 @@
-from flaskr.models.board import Board
+from .transaction import transaction
 
 class BoardService:
     def __init__(self, board_dao):
@@ -16,7 +16,8 @@ class BoardService:
         return page_num, total_count, total_pages, boards
 
     def create_board(self, title, contents, writer):
-        return self.board_dao.create_board(title, contents, writer)
+        with transaction():
+            return self.board_dao.create_board(title, contents, writer)
 
     def modify_board(self, board_id, title, contents, writer):
         board = self.board_dao.get_board_by_id(board_id)
@@ -24,7 +25,8 @@ class BoardService:
             raise BoardNotFoundError("Board not found")
         if board.writer != writer:
             raise PermissionDeniedError("Permission denied")
-        board.update_board(title, contents)
+        with transaction():
+            board.update_board(title, contents)
 
     def remove_board(self, board_id, writer):
         board = self.board_dao.get_board_by_id(board_id)
@@ -32,7 +34,8 @@ class BoardService:
             raise BoardNotFoundError("Board not found")
         if board.writer != writer:
             raise PermissionDeniedError("Permission denied")
-        board.delete_board()
+        with transaction():
+            board.delete_board()
 
 class BoardNotFoundError(Exception):
     pass

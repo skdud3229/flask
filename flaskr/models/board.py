@@ -38,16 +38,13 @@ class Board(db.Model):
     def create_board(title,contents,writer):
         board=Board(title=title,contents=contents,writer=writer)
         db.session.add(board)
-        db.session.commit()
 
     def update_board(self,title,contents):
         self.title=title
         self.contents=contents
-        db.session.commit()
 
     def delete_board(self):
         db.session.delete(self)
-        db.session.commit()
 
 
 
