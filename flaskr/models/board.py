@@ -21,31 +21,33 @@ class Board(db.Model):
     createdAt: Mapped[created_time]
     updatedAt: Mapped[updated_time]
 
-def get_total_boards_num():
-    return Board.query.count()
+    @classmethod
+    def get_total_boards_num(cls):
+        return cls.query.count()
 
-def get_boards(page,per_page):
-    offset=(page-1)*per_page
-    boards=Board.query.order_by(desc(Board.createdAt)).offset(offset).limit(per_page).all()
-    return boards
+    @classmethod
+    def get_boards(cls,page,per_page):
+        offset=(page-1)*per_page
+        return cls.query.order_by(desc(cls.createdAt)).offset(offset).limit(per_page).all()
+    
+    @classmethod
+    def get_board_by_id(cls,board_id):
+        return cls.query.filter_by(id=board_id).first()
 
-def get_board_by_id(board_id):
-    board=Board.query.filter_by(id=board_id).first()
-    return board
+    @staticmethod
+    def create_board(title,contents,writer):
+        board=Board(title=title,contents=contents,writer=writer)
+        db.session.add(board)
+        db.session.commit()
 
-def insert_board(title,contents,writer):
-    board=Board(title=title,contents=contents,writer=writer)
-    db.session.add(board)
-    db.session.commit()
+    def update_board(self,title,contents):
+        self.title=title
+        self.contents=contents
+        db.session.commit()
 
-def update_board(title,contents,board):
-    board.title=title
-    board.contents=contents
-    db.session.commit()
-
-def delete_board(board):
-    db.session.delete(board)
-    db.session.commit()
+    def delete_board(self):
+        db.session.delete(self)
+        db.session.commit()
 
 
 

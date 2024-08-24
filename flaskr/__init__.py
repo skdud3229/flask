@@ -34,11 +34,16 @@ def create_app(test_config=None):
 
     from . import auth
     app.register_blueprint(auth.bp)
-    
-    from . import blog
-    app.register_blueprint(blog.bp)
-    app.add_url_rule('/',endpoint='index')
 
+    from . import blog
+    from .models.board import Board
+    from .services.board_service import BoardService
+    board_service = BoardService(Board)
+    board_view = blog.BoardView.as_view('board_view', board_service)
+    blog.bp.add_url_rule('/', view_func=board_view, methods=['GET','POST'])
+    blog.bp.add_url_rule('/<int:page_num>', view_func=board_view, methods=['GET'])
+    blog.bp.add_url_rule('/<int:board_id>', view_func=board_view, methods=['PUT','DELETE'])
+    app.register_blueprint(blog.bp)
     
     return app
 

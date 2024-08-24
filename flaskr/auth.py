@@ -77,11 +77,11 @@ def refresh_access_Token():
 
 def login_required(view):
     @functools.wraps(view) #view를 wrap하는 새로운 view function을 만듦
-    def wrapped_view(**kwargs):
+    def wrapped_view(*args,**kwargs):
         try:
             verify_jwt_in_request()
             g.user=get_jwt_identity()
-            return view(**kwargs)
+            return view(*args,**kwargs)
         except Exception as e:
             abort(401, '인증 오류 발생: {}'.format(str(e)))
     return wrapped_view
