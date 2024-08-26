@@ -11,7 +11,7 @@ db=SQLAlchemy(model_class=Base)
 
 @click.command('init-db')
 def init_db_command():
-    db.drop_all()
+    #db.drop_all()
     db.create_all()
     click.echo('Initialized the database.')
     

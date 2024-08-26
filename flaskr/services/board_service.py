@@ -4,6 +4,9 @@ class BoardService:
     def __init__(self, board_dao):
         self.board_dao = board_dao
 
+    def get_board_by_id(self, board_id):
+        return self.board_dao.get_board_by_id(board_id)
+
     def fetch_boards(self, page_num, per_page):
         total_count = self.board_dao.get_total_boards_num()
         total_pages = (total_count + per_page - 1) // per_page

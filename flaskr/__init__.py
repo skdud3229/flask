@@ -36,14 +36,24 @@ def create_app(test_config=None):
     app.register_blueprint(auth.bp)
 
     from . import blog
+    from . import comment
     from .models.board import Board
+    from .models.comment import Comment
+
     from .services.board_service import BoardService
+    from .services.comment_service import CommentService
+
     board_service = BoardService(Board)
-    board_view = blog.BoardView.as_view('board_view', board_service)
+    comment_service=CommentService(Comment)
+    board_view = blog.BoardView.as_view('board_view', board_service,comment_service)
+    comment_view = comment.CommentView.as_view('comment_view',comment_service)
+
     blog.bp.add_url_rule('/', view_func=board_view, methods=['GET','POST'])
-    blog.bp.add_url_rule('/<int:page_num>', view_func=board_view, methods=['GET'])
-    blog.bp.add_url_rule('/<int:board_id>', view_func=board_view, methods=['PUT','DELETE'])
+    blog.bp.add_url_rule('/<int:board_id>', view_func=board_view, methods=['GET','PUT','DELETE'])
+    comment.bp.add_url_rule('/comment', view_func=comment_view, methods=['POST'])
+
     app.register_blueprint(blog.bp)
+    app.register_blueprint(comment.bp)
     
     return app
 
